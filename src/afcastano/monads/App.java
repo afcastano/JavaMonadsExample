@@ -28,22 +28,26 @@ public class App {
         printResult(result);
     }
 
+
+
     private Optional<Double> doLogic(Optional<Integer> firstVal,
                                      Optional<Integer> secondVal,
                                      Optional<Integer> thirdVal) {
 
-        if(!firstVal.isPresent() || !secondVal.isPresent() || !thirdVal.isPresent()) {
-            return Optional.empty();
-        }
+        return firstVal.flatMap(val1 ->
+               secondVal.flatMap(val2 ->
+               thirdVal.flatMap(val3 -> {
 
-        if(thirdVal.get() < 0) {
-            return Optional.empty();
-        }
+                    if(val3 == 0) {
+                        return Optional.empty();
+                    }
 
-        Double result = domainLogic.calculate(firstVal.get(), secondVal.get(), thirdVal.get());
+                    return Optional.of(domainLogic.calculate(val1, val2, val3));
 
-        return Optional.of(result);
+               })));
+
     }
+
 
     public static void main (String[] args) {
         new App().exec();
