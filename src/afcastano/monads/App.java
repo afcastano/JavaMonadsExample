@@ -3,12 +3,16 @@ package afcastano.monads;
 import java.util.Optional;
 import java.util.Scanner;
 
+import static afcastano.monads.ExampleHelper.bind;
+import static afcastano.monads.ExampleHelper.getNonZeroVal;
+import static afcastano.monads.ExampleHelper.returnM;
+
 public class App {
 
-    DomainLogic domainLogic;
+    DomainLogic logic;
 
     public App() {
-        domainLogic = new DomainLogic();
+        logic = new DomainLogic();
     }
 
     public void exec(){
@@ -34,20 +38,16 @@ public class App {
                                      Optional<Integer> secondVal,
                                      Optional<Integer> thirdVal) {
 
-        return firstVal.flatMap(val1 ->
-               secondVal.flatMap(val2 ->
-               thirdVal.flatMap(val3 -> {
+        return
+        bind(firstVal, val1 ->
+        bind(secondVal, val2 ->
+        bind(thirdVal, val3 ->
+        bind(getNonZeroVal(val3), divisor ->
+        returnM(logic.calc(val1, val2, val3))
 
-                    if(val3 == 0) {
-                        return Optional.empty();
-                    }
-
-                    return Optional.of(domainLogic.calculate(val1, val2, val3));
-
-               })));
+        ))));
 
     }
-
 
     public static void main (String[] args) {
         new App().exec();
