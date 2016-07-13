@@ -27,7 +27,7 @@ public class Result<T> {
     public<U> Result<U> flatMap(Function<? super T, Result<U>> mapper) {
 
         if(this.isError()) {
-            return error(this.errorVal());
+            return new Result<>(null, this.errorVal(), this.log);
         }
 
         Result<U> mappedResult = mapper.apply(value.get());
