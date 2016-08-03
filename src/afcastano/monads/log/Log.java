@@ -47,11 +47,7 @@ public class Log<T> {
         if(this.getHistory().isPresent()) {
             LogEntry thisHistory = this.getHistory().get();
             if (mappedLog.getHistory().isPresent()) {
-                List<LogEntry> previousEntries = new ArrayList();
-                previousEntries.add(thisHistory);
-                LogEntry mappedEntry = mappedLog.getHistory().get();
-                previousEntries.addAll(mappedEntry.getPrevious());
-                newEntry = Optional.of(LogEntry.newEntry(previousEntries, mappedEntry.getLogText()));
+                newEntry = mergeLogEntries(mappedLog, thisHistory);
 
             } else {
                 newEntry = Optional.of(LogEntry.newEntry(thisHistory.getPrevious(), thisHistory.getLogText()));
@@ -71,6 +67,16 @@ public class Log<T> {
 
         //If new history is not present, then use the old one.
         return new Log<>(mappedLog.getValue(), newEntry.isPresent() ? newEntry : this.getHistory());
+    }
+
+    private <U> Optional<LogEntry> mergeLogEntries(Log<U> mappedLog, LogEntry thisHistory) {
+        Optional<LogEntry> newEntry;
+        List<LogEntry> previousEntries = new ArrayList();
+        previousEntries.add(thisHistory);
+        LogEntry mappedEntry = mappedLog.getHistory().get();
+        previousEntries.addAll(mappedEntry.getPrevious());
+        newEntry = Optional.of(LogEntry.newEntry(previousEntries, mappedEntry.getLogText()));
+        return newEntry;
     }
 
     @Override
