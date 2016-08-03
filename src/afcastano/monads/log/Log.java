@@ -5,21 +5,19 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
-import static afcastano.monads.log.LogEntry.newEntry;
-
 public class Log<T> {
-    private T value;
+    private Optional<T> value;
 
     private Optional<LogEntry> history;
 
     private Log(T value, Optional<LogEntry> logEntry) {
-        this.value = value;
+        this.value = Optional.ofNullable(value);
         this.history = logEntry;
     }
 
 
     public T getValue() {
-        return value;
+        return value.orElse(null);
     }
 
     public Optional<LogEntry> getHistory() {
@@ -28,6 +26,10 @@ public class Log<T> {
 
     public static<V> Log<V> unit(V value) {
         return log(value, null);
+    }
+
+    public static<S> Log<S> empty() {
+        return unit(null);
     }
 
     public static<V> Log<V> log(V value, String logS) {
@@ -42,10 +44,14 @@ public class Log<T> {
 
     public <U> Log<U> flatMap(Function<T, Log<U>> mapper) {
 
+        if(!value.isPresent()) {
+            return new Log(Optional.empty(), this.history);
+        }
+
         List<LogEntry> previousEntries = new ArrayList();
         this.history.ifPresent(previousEntries::add);
 
-        Log<U> mappedLog = mapper.apply(value);
+        Log<U> mappedLog = mapper.apply(this.getValue());
         Optional<LogEntry> mappedEntry = mappedLog.history;
 
         Optional<LogEntry> newEntry = mappedEntry.map(entry -> {
@@ -53,7 +59,7 @@ public class Log<T> {
             return LogEntry.newEntry(previousEntries, entry.getLogText());
         });
 
-        return new Log<>(mappedLog.value, newEntry);
+        return new Log<>(mappedLog.getValue(), newEntry);
     }
 
     @Override

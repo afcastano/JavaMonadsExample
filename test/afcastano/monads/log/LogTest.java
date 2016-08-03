@@ -1,5 +1,6 @@
 package afcastano.monads.log;
 
+import afcastano.monads.result.Result;
 import org.junit.Test;
 
 import static afcastano.monads.log.Log.log;
