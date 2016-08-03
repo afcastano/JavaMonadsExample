@@ -6,18 +6,18 @@ import java.util.Optional;
 import java.util.function.Function;
 
 public class Log<T> {
-    private Optional<T> value;
+    private T value;
 
     private Optional<LogEntry> history;
 
     private Log(T value, Optional<LogEntry> logEntry) {
-        this.value = Optional.ofNullable(value);
+        this.value =value;
         this.history = logEntry;
     }
 
 
     public T getValue() {
-        return value.orElse(null);
+        return value;
     }
 
     public Optional<LogEntry> getHistory() {
@@ -26,10 +26,6 @@ public class Log<T> {
 
     public static<V> Log<V> unit(V value) {
         return log(value, null);
-    }
-
-    public static<S> Log<S> empty() {
-        return unit(null);
     }
 
     public static<V> Log<V> log(V value, String logS) {
@@ -44,22 +40,37 @@ public class Log<T> {
 
     public <U> Log<U> flatMap(Function<T, Log<U>> mapper) {
 
-        if(!value.isPresent()) {
-            return new Log(Optional.empty(), this.history);
+        Log<U> mappedLog = mapper.apply(this.getValue());
+
+        Optional<LogEntry> newEntry;
+
+        if(this.getHistory().isPresent()) {
+            LogEntry thisHistory = this.getHistory().get();
+            if (mappedLog.getHistory().isPresent()) {
+                List<LogEntry> previousEntries = new ArrayList();
+                previousEntries.add(thisHistory);
+                LogEntry mappedEntry = mappedLog.getHistory().get();
+                previousEntries.addAll(mappedEntry.getPrevious());
+                newEntry = Optional.of(LogEntry.newEntry(previousEntries, mappedEntry.getLogText()));
+
+            } else {
+                newEntry = Optional.of(LogEntry.newEntry(thisHistory.getPrevious(), thisHistory.getLogText()));
+
+            }
+
+        } else {
+            if (mappedLog.getHistory().isPresent()) {
+                newEntry = mappedLog.getHistory();
+
+            } else {
+                newEntry = Optional.empty();
+
+            }
+
         }
 
-        List<LogEntry> previousEntries = new ArrayList();
-        this.history.ifPresent(previousEntries::add);
-
-        Log<U> mappedLog = mapper.apply(this.getValue());
-        Optional<LogEntry> mappedEntry = mappedLog.history;
-
-        Optional<LogEntry> newEntry = mappedEntry.map(entry -> {
-            previousEntries.addAll(entry.getPrevious());
-            return LogEntry.newEntry(previousEntries, entry.getLogText());
-        });
-
-        return new Log<>(mappedLog.getValue(), newEntry);
+        //If new history is not present, then use the old one.
+        return new Log<>(mappedLog.getValue(), newEntry.isPresent() ? newEntry : this.getHistory());
     }
 
     @Override

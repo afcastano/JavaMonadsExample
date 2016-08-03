@@ -43,7 +43,7 @@ public class Result<T> {
 
     @Override
     public String toString() {
-        String result = value.isPresent() ? value.toString() : error.toString();
+        String result = value.isPresent() ? value.get().toString() : "Error: " + error.get().toString();
         return result;
     }
 

@@ -1,7 +1,9 @@
 package afcastano.monads.log;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class LogEntry {
@@ -20,6 +22,13 @@ public class LogEntry {
     public static LogEntry newEntry(List<LogEntry> previous, String logText) {
         return new LogEntry(previous, logText);
     }
+
+    public LogEntry merge(LogEntry mappedEntry) {
+        List<LogEntry> previousEntries = new ArrayList(this.previous);
+        previousEntries.addAll(mappedEntry.getPrevious());
+        return LogEntry.newEntry(previousEntries, mappedEntry.getLogText());
+    }
+
 
     public String getLogText() {
         return logText;
