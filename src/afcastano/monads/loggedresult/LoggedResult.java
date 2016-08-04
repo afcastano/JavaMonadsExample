@@ -29,17 +29,15 @@ public class LoggedResult<T> {
 
     public <U> LoggedResult<U> flatMap(Function<T, LoggedResult<U>> mapper) {
 
-        Log<Result<U>> mappedLog = log.flatMap(result -> mapResult(mapper, result));
+        Log<Result<U>> mappedLog = log.flatMap(result -> {
+            if(result.isError()) {
+                return Log.unit(Result.error(result.errorVal()));
+            }
+
+            return mapper.apply(result.value()).log;
+        });
 
         return new LoggedResult(mappedLog);
-    }
-
-    private <U> Log<Result<U>> mapResult(Function<T, LoggedResult<U>> mapper, Result<T> result) {
-        if(result.isError()) {
-            return Log.unit(Result.error(result.errorVal()));
-        }
-
-        return mapper.apply(result.value()).log;
     }
 
 }
