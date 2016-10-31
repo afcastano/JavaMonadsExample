@@ -22,6 +22,8 @@ public class LoggedResultTest {
                 logResult(format(finalRes), "Formatting")
         )));
 
+        System.out.println(finalResult.getHistory().toString());
+
         assertFalse(finalResult.getResult().isError());
         assertThat(finalResult.getResult().value(), is("This is the formatted value: 2"));
         assertThat(finalResult.getHistory().toString(), is("[ \n\t" +
@@ -40,6 +42,8 @@ public class LoggedResultTest {
                 logResult(operateWithResults(res1, res2), "Calculating final result").flatMap(finalRes ->
                 logResult(format(finalRes), "Formatting")
         )));
+
+        System.out.println(finalResult.getHistory().toString());
 
         assertTrue(finalResult.getResult().isError());
         assertThat(finalResult.getResult().errorVal(), is("val1 (7) can not be less than val2 (12)"));
