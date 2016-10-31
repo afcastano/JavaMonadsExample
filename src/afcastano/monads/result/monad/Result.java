@@ -1,4 +1,4 @@
-package afcastano.monads.result;
+package afcastano.monads.result.monad;
 
 import java.util.Optional;
 import java.util.function.Function;

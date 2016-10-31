@@ -1,11 +1,11 @@
 package afcastano.monads.loggedresult;
 
-import afcastano.monads.result.Result;
+import afcastano.monads.result.monad.Result;
 import org.junit.Test;
 
 import static afcastano.monads.loggedresult.LoggedResult.logResult;
-import static afcastano.monads.result.Result.error;
-import static afcastano.monads.result.Result.ok;
+import static afcastano.monads.result.monad.Result.error;
+import static afcastano.monads.result.monad.Result.ok;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertFalse;

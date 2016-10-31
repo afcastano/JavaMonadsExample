@@ -2,7 +2,7 @@ package afcastano.monads.loggedresult;
 
 import afcastano.monads.log.Log;
 import afcastano.monads.log.LogEntry;
-import afcastano.monads.result.Result;
+import afcastano.monads.result.monad.Result;
 
 import java.util.function.Function;
 

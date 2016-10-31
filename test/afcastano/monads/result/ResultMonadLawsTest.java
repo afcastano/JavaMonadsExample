@@ -1,10 +1,11 @@
 package afcastano.monads.result;
 
+import afcastano.monads.result.monad.Result;
 import org.junit.Test;
 
 import java.util.function.Function;
 
-import static afcastano.monads.result.Result.ok;
+import static afcastano.monads.result.monad.Result.ok;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertTrue;
